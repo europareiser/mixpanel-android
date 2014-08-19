@@ -1,5 +1,6 @@
 Getting Started
 ---------------
+
 You can find getting started guides for using Mixpanel at:
 
 * https://mixpanel.com/help/reference/android#installing-eclipse for installing in Eclipse.
