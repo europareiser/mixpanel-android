@@ -113,12 +113,12 @@ uploadArchives {
              * sonatypePassword=
              */
 
-            beforeDeployment {
-                MavenDeployment deployment -> signing.signPom(deployment)
-            }
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
+//            beforeDeployment {
+//                MavenDeployment deployment -> signing.signPom(deployment)
+//            }
+//            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+//                authentication(userName: sonatypeUsername, password: sonatypePassword)
+//            }
         } else {
             repository(url:'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath)
         }
