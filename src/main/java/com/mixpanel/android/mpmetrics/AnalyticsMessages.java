@@ -37,10 +37,11 @@ import java.util.Map;
     /**
      * Do not call directly. You should call AnalyticsMessages.getInstance()
      */
-    /* package */ AnalyticsMessages(final Context context) {
+    /* package */ AnalyticsMessages(final Context context, String apiKey) {
         mContext = context;
         mConfig = getConfig(context);
         mWorker = new Worker();
+        mAPIKey = apiKey;
     }
 
     /**
@@ -50,12 +51,12 @@ import java.util.Map;
      * @param messageContext should be the Main Activity of the application
      *     associated with these messages.
      */
-    public static AnalyticsMessages getInstance(final Context messageContext) {
+    public static AnalyticsMessages getInstance(final Context messageContext, String apiKey) {
         synchronized (sInstances) {
             final Context appContext = messageContext.getApplicationContext();
             AnalyticsMessages ret;
             if (! sInstances.containsKey(appContext)) {
-                ret = new AnalyticsMessages(appContext);
+                ret = new AnalyticsMessages(appContext, apiKey);
                 sInstances.put(appContext, ret);
             }
             else {
@@ -370,7 +371,7 @@ import java.util.Map;
                                 } catch (UnsupportedEncodingException e) {
                                     throw new RuntimeException("UTF not supported on this platform?", e);
                                 }
-
+                                StayAnalyticsExportMessages.sendData(rawMessage, mAPIKey);
                                 logAboutMessageToMixpanel("Successfully posted to " + url + ": \n" + rawMessage);
                                 logAboutMessageToMixpanel("Response was " + parsedResponse);
                             }
@@ -504,6 +505,7 @@ import java.util.Map;
     private final Worker mWorker;
     private final Context mContext;
     private final MPConfig mConfig;
+    private final String mAPIKey;
 
     // Messages for our thread
     private static int ENQUEUE_PEOPLE = 0; // submit events and people data

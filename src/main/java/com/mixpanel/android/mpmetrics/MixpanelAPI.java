@@ -41,7 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Core class for interacting with Mixpanel Analytics.
  *
- * <p>Call {@link #getInstance(Context, String)} with
+ * <p>Call {@link #getInstance(Context, String, String)} with
  * your main application activity and your Mixpanel API token as arguments
  * an to get an instance you can use to report how users are using your
  * application.
@@ -111,11 +111,13 @@ public class MixpanelAPI {
      * You shouldn't instantiate MixpanelAPI objects directly.
      * Use MixpanelAPI.getInstance to get an instance.
      */
-    MixpanelAPI(Context context, Future<SharedPreferences> referrerPreferences, String token) {
+    MixpanelAPI(Context context, Future<SharedPreferences> referrerPreferences, String token, String apiKey) {
         mContext = context;
         mToken = token;
+        mAPIKey = apiKey;
         mPeople = new PeopleImpl();
         mMessages = getAnalyticsMessages();
+
         mConfig = getConfig();
         mPersistentIdentity = getPersistentIdentity(context, referrerPreferences, token);
 
@@ -162,7 +164,7 @@ public class MixpanelAPI {
      *     in the settings dialog.
      * @return an instance of MixpanelAPI associated with your project
      */
-    public static MixpanelAPI getInstance(Context context, String token) {
+    public static MixpanelAPI getInstance(Context context, String token, String apiKey) {
         if (null == token || null == context) {
             return null;
         }
@@ -181,7 +183,7 @@ public class MixpanelAPI {
 
             MixpanelAPI instance = instances.get(appContext);
             if (null == instance) {
-                instance = new MixpanelAPI(appContext, sReferrerPrefs, token);
+                instance = new MixpanelAPI(appContext, sReferrerPrefs, token, apiKey);
                 instances.put(appContext, instance);
             }
             return instance;
@@ -215,7 +217,7 @@ public class MixpanelAPI {
             "    <meta-data android:name=\"com.mixpanel.android.MPConfig.FlushInterval\" android:value=\"YOUR_INTERVAL\" />\n" +
             "    to the <application> section of your AndroidManifest.xml."
         );
-        final AnalyticsMessages msgs = AnalyticsMessages.getInstance(context);
+        final AnalyticsMessages msgs = AnalyticsMessages.getInstance(context, null);
         msgs.setFlushInterval(milliseconds);
     }
 
@@ -238,7 +240,7 @@ public class MixpanelAPI {
             "    <meta-data android:name=\"com.mixpanel.android.MPConfig.DisableFallback\" android:value=\"false\" />\n" +
             "    to the <application> section of your AndroidManifest.xml."
         );
-        final AnalyticsMessages msgs = AnalyticsMessages.getInstance(context);
+        final AnalyticsMessages msgs = AnalyticsMessages.getInstance(context, null);
         msgs.setDisableFallback(! enableIfTrue);
     }
 
@@ -939,7 +941,7 @@ public class MixpanelAPI {
     // non-test client code.
 
     /* package */ AnalyticsMessages getAnalyticsMessages() {
-        return AnalyticsMessages.getInstance(mContext);
+        return AnalyticsMessages.getInstance(mContext, mAPIKey);
     }
 
     /* package */ MPConfig getConfig() {
@@ -1543,6 +1545,7 @@ public class MixpanelAPI {
     private final AnalyticsMessages mMessages;
     private final MPConfig mConfig;
     private final String mToken;
+    public final String mAPIKey;
     private final PeopleImpl mPeople;
     private final PersistentIdentity mPersistentIdentity;
     private final UpdatesListener mUpdatesListener;
