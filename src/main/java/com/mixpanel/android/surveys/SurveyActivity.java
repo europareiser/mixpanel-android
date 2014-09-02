@@ -71,7 +71,7 @@ public class SurveyActivity extends Activity {
             finish();
             return;
         }
-        mMixpanel = MixpanelAPI.getInstance(SurveyActivity.this, mUpdateDisplayState.getToken());
+        mMixpanel = MixpanelAPI.getInstance(SurveyActivity.this, mUpdateDisplayState.getToken(), null);
 
         if (isShowingInApp()) {
             onCreateInAppNotification(savedInstanceState);
